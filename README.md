@@ -1,4 +1,4 @@
-# ArcUnify New WordPress Theme — v1.1.0 (core, homepage, all inner pages)
+# ArcUnify New WordPress Theme — v2.0.0 (core, homepage, all inner pages)
 
 Custom, dependency-free theme for arcunify.com. It replaces the visual layer only:
 page URLs, Elementor page content, GTM tracking and existing copy are preserved.

@@ -9,7 +9,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'ARCUNIFY_VERSION', '1.1.0' );
+define( 'ARCUNIFY_VERSION', '2.0.0' );
 define( 'ARCUNIFY_DIR', get_template_directory() );
 define( 'ARCUNIFY_URI', get_template_directory_uri() );
 
