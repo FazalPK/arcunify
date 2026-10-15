@@ -1,4 +1,4 @@
-# ArcUnify WordPress Theme — v1.1.0 (core, homepage, all inner pages)
+# ArcUnify New WordPress Theme — v1.1.0 (core, homepage, all inner pages)
 
 Custom, dependency-free theme for arcunify.com. It replaces the visual layer only:
 page URLs, Elementor page content, GTM tracking and existing copy are preserved.
@@ -21,7 +21,7 @@ page URLs, Elementor page content, GTM tracking and existing copy are preserved.
 ## Install on staging (never straight to live)
 
 1. Back up files + database. Export the Elementor Kit (Templates → Kit).
-2. Appearance → Themes → Add New → Upload `arcunify.zip` → Activate.
+2. Appearance → Themes → Add New → Upload `arcunify-new.zip` → Activate.
 3. If Elementor Pro Theme Builder has a Header or Footer template, set its display
    conditions to none. (The theme never prints Elementor header/footer locations,
    so nothing doubles up, but this keeps admin tidy.)
@@ -108,7 +108,7 @@ Customize → ArcUnify → Advanced so it only loads once.
 ## Structure
 
 ```
-arcunify/
+arcunify-new/
 ├── functions.php            loader only
 ├── inc/
 │   ├── content.php          existing homepage copy (single source of truth)
