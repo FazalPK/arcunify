@@ -1,0 +1,240 @@
+/* ==========================================================================
+   Home: hero + arc
+   ========================================================================== */
+
+.au-hero {
+	position: relative;
+	overflow: hidden;
+	padding-top: calc(var(--au-bar-h) + clamp(40px, 7vw, 96px));
+	padding-bottom: clamp(56px, 7vw, 104px);
+	background:
+		radial-gradient(40% 55% at 74% 80%, rgba(31, 99, 224, 0.14), transparent 70%),
+		linear-gradient(180deg, var(--au-ink) 0%, #070912 100%);
+}
+
+@media (min-width: 768px) {
+	.au-hero {
+		padding-top: calc(var(--au-bar-h) + var(--au-utility-h) + clamp(48px, 6vw, 96px));
+	}
+}
+
+/* Fine engineering grid, fading out toward the copy. */
+.au-hero::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background-image:
+		linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+	background-size: 48px 48px;
+	-webkit-mask-image: radial-gradient(70% 80% at 75% 60%, #000 0%, transparent 75%);
+	mask-image: radial-gradient(70% 80% at 75% 60%, #000 0%, transparent 75%);
+	pointer-events: none;
+}
+
+.au-hero__grid {
+	position: relative;
+	display: grid;
+	gap: clamp(40px, 6vw, 72px);
+	align-items: center;
+}
+
+@media (min-width: 1024px) {
+	.au-hero__grid {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
+	}
+}
+
+.au-hero__kicker {
+	margin-bottom: var(--au-s-6);
+}
+
+.au-hero__title {
+	font-size: var(--au-fs-display);
+	font-weight: 700;
+	line-height: 1;
+	letter-spacing: -0.04em;
+	max-width: 13ch;
+	color: #fff;
+}
+
+.au-hero__lead {
+	margin-top: var(--au-s-6);
+	max-width: 54ch;
+	font-size: var(--au-fs-lead);
+	line-height: 1.6;
+	color: #b4bccd;
+}
+
+.au-hero .au-actions {
+	margin-top: var(--au-s-10);
+}
+
+/* The arc ------------------------------------------------------------------ */
+
+.au-arc {
+	position: relative;
+	width: 100%;
+	max-width: 640px;
+	margin-inline: auto;
+	aspect-ratio: 600 / 460;
+}
+
+.au-arc__lines {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+.au-arc__guide {
+	fill: none;
+	stroke: rgba(255, 255, 255, 0.12);
+	stroke-width: 1;
+	stroke-dasharray: 2 6;
+}
+
+.au-arc__main {
+	fill: none;
+	stroke: url(#au-arc-stroke);
+	stroke-width: 1.75;
+	stroke-dasharray: 1;
+	stroke-dashoffset: 0;
+}
+
+.au-arc__spoke {
+	stroke: rgba(63, 208, 255, 0.28);
+	stroke-width: 1;
+	stroke-dasharray: 1;
+	stroke-dashoffset: 0;
+}
+
+.au-arc__ring {
+	fill: none;
+	stroke: rgba(63, 208, 255, 0.28);
+	stroke-width: 1;
+}
+
+.au-arc__core {
+	fill: var(--au-accent-bright);
+	filter: drop-shadow(0 0 10px rgba(63, 208, 255, 0.9));
+}
+
+.au-arc__pulse {
+	fill: #fff;
+	filter: drop-shadow(0 0 6px rgba(63, 208, 255, 1));
+}
+
+.au-arc__nodes {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.au-arc__node {
+	position: absolute;
+	left: var(--x);
+	top: var(--y);
+	transform: translate(-50%, -50%);
+}
+
+.au-arc__node a {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 9px 14px;
+	white-space: nowrap;
+	font-size: var(--au-fs-sm);
+	font-weight: 600;
+	line-height: 1;
+	color: #fff;
+	text-decoration: none;
+	background: rgba(12, 15, 23, 0.9);
+	border: 1px solid rgba(63, 208, 255, 0.28);
+	border-radius: var(--au-radius-sm);
+	box-shadow: 0 0 0 4px rgba(5, 6, 10, 0.9), 0 12px 32px -12px rgba(31, 99, 224, 0.6);
+	transition: border-color var(--au-fast) var(--au-ease), background-color var(--au-fast) var(--au-ease);
+}
+
+.au-arc__node a:hover {
+	background: var(--au-ink-3);
+	border-color: var(--au-accent-bright);
+}
+
+.au-arc__node .au-icon {
+	width: 18px;
+	height: 18px;
+	color: var(--au-accent-bright);
+}
+
+/* One orchestrated entrance: arc draws, spokes follow, services light up. */
+@media (prefers-reduced-motion: no-preference) {
+	html.js .au-arc__main {
+		stroke-dashoffset: 1;
+		animation: au-draw 1.2s var(--au-ease) 0.15s forwards;
+	}
+
+	html.js .au-arc__spoke {
+		stroke-dashoffset: 1;
+		animation: au-draw 0.7s var(--au-ease) forwards;
+		animation-delay: calc(0.7s + var(--i) * 0.08s);
+	}
+
+	html.js .au-arc__node {
+		opacity: 0;
+		animation: au-node 0.5s var(--au-ease) forwards;
+		animation-delay: calc(0.75s + var(--i) * 0.09s);
+	}
+}
+
+@keyframes au-draw {
+	to {
+		stroke-dashoffset: 0;
+	}
+}
+
+@keyframes au-node {
+	from {
+		opacity: 0;
+		transform: translate(-50%, calc(-50% + 6px));
+	}
+
+	to {
+		opacity: 1;
+		transform: translate(-50%, -50%);
+	}
+}
+
+/* Small screens: the arc becomes a simple list of service links. */
+@media (max-width: 639px) {
+	.au-arc {
+		aspect-ratio: auto;
+		max-width: none;
+	}
+
+	.au-arc__lines {
+		display: none;
+	}
+
+	.au-arc__nodes {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.au-arc__node {
+		position: static;
+		transform: none;
+	}
+
+	html.js .au-arc__node {
+		animation: none;
+		opacity: 1;
+	}
+
+	.au-arc__node a {
+		box-shadow: none;
+		padding: 11px 14px;
+	}
+}

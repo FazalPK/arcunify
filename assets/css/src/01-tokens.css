@@ -1,0 +1,121 @@
+/* ==========================================================================
+   01 Tokens
+   All colour, type, spacing and motion values. Components read only these.
+   Prefix --au- avoids collisions with Elementor's --e-global-* variables.
+   ========================================================================== */
+
+@font-face {
+	font-family: "Plus Jakarta Sans Variable";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 200 800;
+	src: url("../fonts/plus-jakarta-sans-latin-wght-normal.woff2") format("woff2-variations"),
+		url("../fonts/plus-jakarta-sans-latin-wght-normal.woff2") format("woff2");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+	/* Brand */
+	--au-ink: #05060a;          /* near-black base, from brand theme-color #010003 */
+	--au-ink-2: #0c0f17;        /* raised dark surface */
+	--au-ink-3: #131826;        /* hover on dark */
+	--au-slate: #1a2030;
+	--au-accent: #1f63e0;       /* white text on it: 5.3:1 */
+	--au-accent-hover: #1a55c4;
+	--au-accent-bright: #3fd0ff;/* highlights and links on dark only */
+	--au-accent-soft: rgba(31, 99, 224, 0.1);
+
+	/* Neutrals */
+	--au-paper: #f4f6fa;
+	--au-surface: #ffffff;
+	--au-text: #0e1320;
+	--au-muted: #5b6478;        /* 5.5:1 on paper */
+	--au-border: #e1e5ee;
+
+	/* Type */
+	--au-font: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	--au-fs-display: clamp(2.5rem, 1.35rem + 4.6vw, 4.75rem);
+	--au-fs-h1: clamp(2.25rem, 1.5rem + 3vw, 3.75rem);
+	--au-fs-h2: clamp(1.875rem, 1.35rem + 2.1vw, 3rem);
+	--au-fs-h3: clamp(1.1875rem, 1.1rem + 0.35vw, 1.375rem);
+	--au-fs-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+	--au-fs-body: 1.0625rem;
+	--au-fs-sm: 0.9375rem;
+	--au-fs-xs: 0.8125rem;
+
+	/* Space (4px scale) */
+	--au-s-1: 4px;
+	--au-s-2: 8px;
+	--au-s-3: 12px;
+	--au-s-4: 16px;
+	--au-s-5: 20px;
+	--au-s-6: 24px;
+	--au-s-8: 32px;
+	--au-s-10: 40px;
+	--au-s-12: 48px;
+	--au-s-16: 64px;
+	--au-section: clamp(72px, 9vw, 136px);
+
+	/* Layout */
+	--au-container: 1240px;
+	--au-gutter: clamp(20px, 4vw, 40px);
+	--au-radius: 8px;
+	--au-radius-sm: 6px;
+	--au-utility-h: 40px;
+	--au-bar-h: 72px;
+
+	/* Motion */
+	--au-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+	--au-fast: 160ms;
+	--au-base: 240ms;
+
+	/* Contextual (switched by data-theme) */
+	--fg: var(--au-text);
+	--fg-muted: var(--au-muted);
+	--bg: var(--au-surface);
+	--card: var(--au-surface);
+	--line: var(--au-border);
+	--link: var(--au-accent);
+	--ghost-line: rgba(14, 19, 32, 0.22);
+}
+
+[data-theme="light"] {
+	--fg: var(--au-text);
+	--fg-muted: var(--au-muted);
+	--bg: var(--au-surface);
+	--card: var(--au-paper);
+	--line: var(--au-border);
+	--link: var(--au-accent);
+	--ghost-line: rgba(14, 19, 32, 0.22);
+}
+
+[data-theme="paper"] {
+	--fg: var(--au-text);
+	--fg-muted: var(--au-muted);
+	--bg: var(--au-paper);
+	--card: var(--au-surface);
+	--line: var(--au-border);
+	--link: var(--au-accent);
+	--ghost-line: rgba(14, 19, 32, 0.22);
+}
+
+[data-theme="dark"] {
+	--fg: #e8ecf5;
+	--fg-muted: #9aa3b8;        /* 7.6:1 on ink */
+	--bg: var(--au-ink);
+	--card: var(--au-ink-2);
+	--line: rgba(255, 255, 255, 0.09);
+	--link: var(--au-accent-bright);
+	--ghost-line: rgba(255, 255, 255, 0.24);
+}
+
+[data-theme] {
+	color: var(--fg);
+	background-color: var(--bg);
+}
+
+@media (min-width: 1024px) {
+	:root {
+		--au-bar-h: 80px;
+	}
+}

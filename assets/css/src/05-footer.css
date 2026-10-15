@@ -1,0 +1,132 @@
+/* ==========================================================================
+   05 Footer
+   ========================================================================== */
+
+.au-footer {
+	padding-top: clamp(56px, 7vw, 96px);
+	font-family: var(--au-font);
+	font-size: var(--au-fs-sm);
+	border-top: 1px solid var(--line);
+}
+
+.au-footer .au-footer__grid {
+	display: grid;
+	gap: var(--au-s-10);
+	padding-bottom: clamp(40px, 5vw, 72px);
+}
+
+@media (min-width: 640px) {
+	.au-footer .au-footer__grid {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+@media (min-width: 1024px) {
+	.au-footer .au-footer__grid {
+		grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr));
+		gap: var(--au-s-12);
+	}
+}
+
+.au-footer .au-footer__about {
+	max-width: 38ch;
+	margin-top: var(--au-s-5);
+	color: var(--fg-muted);
+	line-height: 1.6;
+}
+
+.au-footer .au-footer__title {
+	margin-bottom: var(--au-s-4);
+	font-family: var(--au-font);
+	font-size: var(--au-fs-sm);
+	font-weight: 600;
+	letter-spacing: 0;
+	color: #fff;
+}
+
+.au-footer ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: grid;
+	gap: 10px;
+}
+
+.au-footer .au-footer__col a,
+.au-footer .au-footer__bottom a {
+	color: var(--fg-muted);
+	text-decoration: none;
+	transition: color var(--au-fast) var(--au-ease);
+}
+
+.au-footer .au-footer__col a:hover,
+.au-footer .au-footer__bottom a:hover {
+	color: #fff;
+}
+
+.au-footer .au-footer__contact li {
+	display: flex;
+	gap: 10px;
+	align-items: flex-start;
+	color: var(--fg-muted);
+}
+
+.au-footer .au-footer__contact .au-icon {
+	width: 16px;
+	height: 16px;
+	margin-top: 3px;
+	color: var(--au-accent-bright);
+}
+
+.au-footer address {
+	font-style: normal;
+}
+
+.au-footer .au-footer__social {
+	display: flex;
+	gap: 8px;
+	margin-top: var(--au-s-6);
+}
+
+.au-footer .au-footer__social a {
+	display: grid;
+	place-items: center;
+	width: 40px;
+	height: 40px;
+	border: 1px solid var(--line);
+	border-radius: var(--au-radius-sm);
+	color: var(--fg-muted);
+}
+
+.au-footer .au-footer__social a:hover {
+	color: #fff;
+	border-color: var(--ghost-line);
+}
+
+.au-footer .au-footer__social .au-icon {
+	width: 18px;
+	height: 18px;
+}
+
+.au-footer .au-footer__bottom {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: var(--au-s-4);
+	padding-block: var(--au-s-6);
+	border-top: 1px solid var(--line);
+	color: var(--fg-muted);
+	font-size: var(--au-fs-xs);
+}
+
+.au-footer .au-footer__legal {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--au-s-6);
+}
+
+@media (max-width: 767px) {
+	.au-footer {
+		padding-bottom: 80px; /* room for the sticky mobile CTA */
+	}
+}

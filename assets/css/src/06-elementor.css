@@ -1,0 +1,34 @@
+/* ==========================================================================
+   06 Elementor compatibility (legacy pages during migration)
+   - Elementor content renders full width inside .au-elementor.
+   - Theme buttons in the chrome are doubled-up so Kit link colours lose.
+   ========================================================================== */
+
+.au-elementor {
+	display: block;
+	width: 100%;
+}
+
+.au-elementor > .elementor {
+	width: 100%;
+}
+
+.au-header .au-btn.au-btn--primary,
+.au-mobile .au-btn.au-btn--primary,
+.au-mobile-cta .au-btn.au-btn--primary,
+.au-main .au-btn.au-btn--primary {
+	color: #fff;
+}
+
+.au-header .au-btn,
+.au-mobile-cta .au-btn {
+	font-family: var(--au-font);
+	text-transform: none;
+}
+
+/* Kit heading styles must not restyle the theme chrome. */
+body[class*="elementor-kit-"] .au-footer h2.au-footer__title {
+	font-size: var(--au-fs-sm);
+	line-height: 1.4;
+	color: #fff;
+}
