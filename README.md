@@ -175,3 +175,16 @@ host, full FTP username and password, and `explicit_tls = true`.
 .\deploy.ps1 push            # upload files that are newer here (never deletes on the server)
 .\deploy.ps1 push -Force     # upload every differing file, even if the server copy is newer
 ```
+
+## Automatic deploy on push (GitHub webhook)
+
+`tools/deploy-hook.php` deploys every push to `main` without GitHub Actions or FTP.
+GitHub calls it, it checks the signature, downloads that commit from GitHub and copies changed
+files into `wp-content/themes/arcunify` (it never deletes files). Runs are logged to
+`au-deploy.log` next to the config file.
+
+1. Upload `tools/deploy-hook.php` to the WordPress root as `au-deploy.php`.
+2. Copy `tools/au-deploy-config.example.php` to `au-deploy-config.php`, set a random secret
+   (32+ characters) and upload it one level above the WordPress root, e.g. `/home/teksetda/`.
+3. GitHub → Settings → Webhooks → Add webhook: Payload URL `https://arcunify.com/au-deploy.php`,
+   content type `application/json`, the same secret, "Just the push event".

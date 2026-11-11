@@ -39,6 +39,7 @@ $exclude = @(
     '--exclude', '.gitignore',
     '--exclude', '.gitattributes',
     '--exclude', '.vscode/**',
+    '--exclude', 'tools/**',
     '--exclude', 'README.md',
     '--exclude', 'arcunify-conversation-export.md',
     '--exclude', 'deploy.ps1',
