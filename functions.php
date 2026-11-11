@@ -26,6 +26,7 @@ $arcunify_includes = array(
 	'elementor-compat', // Rendering existing Elementor pages safely.
 	'tracking',         // Google Tag Manager (preserved from the current site).
 	'templates',        // Maps core pages to native templates.
+	'landing',          // Landing pages converted from Elementor + their form.
 	'contact-form',     // Built-in enquiry form (or a form plugin shortcode).
 	'schema',           // Organization, FAQPage, BreadcrumbList JSON-LD.
 );

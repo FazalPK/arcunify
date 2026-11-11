@@ -27,7 +27,9 @@ function arcunify_asset_ver( $rel ) {
 function arcunify_enqueue_assets() {
 	wp_enqueue_style( 'arcunify', ARCUNIFY_URI . '/assets/css/theme.css', array(), arcunify_asset_ver( 'assets/css/theme.css' ) );
 
-	if ( arcunify_is_native_view() ) {
+	if ( arcunify_is_landing_view() ) {
+		wp_enqueue_style( 'arcunify-landing-voip', ARCUNIFY_URI . '/assets/css/landing-voip.css', array( 'arcunify' ), arcunify_asset_ver( 'assets/css/landing-voip.css' ) );
+	} elseif ( arcunify_is_native_view() ) {
 		wp_enqueue_style( 'arcunify-sections', ARCUNIFY_URI . '/assets/css/sections.css', array( 'arcunify' ), arcunify_asset_ver( 'assets/css/sections.css' ) );
 	}
 

@@ -1,0 +1,332 @@
+/* ==========================================================================
+   VoIP landing page (/voip-communication/), page-templates/landing-voip.php.
+   Loaded only on that page. The CSS below is the page's original Elementor
+   HTML-widget CSS, copied verbatim so the design is unchanged.
+   ========================================================================== */
+
+*{box-sizing:border-box}.au-page{font-family:Arial,Helvetica,sans-serif !important;color:#172033 !important;background:#fff !important;line-height:1.55}.au-page a{text-decoration:none}
+.au-wrap{max-width:1160px !important;margin:auto !important;padding:0 24px}.au-hero{background:linear-gradient(135deg,#07152f,#123b70) !important;color:#fff !important;padding:78px 0 70px}.au-grid{display:grid !important;grid-template-columns:1.15fr .85fr !important;gap:55px !important;align-items:center}
+.ey{display:inline-block !important;background:rgba(255,255,255,.12) !important;border:1px solid rgba(255,255,255,.2) !important;padding:8px 14px !important;border-radius:30px !important;font-size:13px !important;font-weight:700 !important;margin-bottom:20px}.h1{font-size:54px !important;line-height:1.08 !important;margin:0 0 20px !important;font-weight:800 !important;letter-spacing:-1px}.lead{font-size:20px !important;line-height:1.6 !important;margin:0 0 28px !important;color:#e5edf8}
+.btn{display:inline-block !important;background:#fff !important;color:#0b3260 !important;padding:16px 26px !important;border-radius:7px !important;font-weight:800 !important;font-size:16px}.trust{display:flex !important;gap:12px !important;flex-wrap:wrap !important;margin-top:22px}.trust span{background:rgba(255,255,255,.08) !important;padding:8px 11px !important;border-radius:5px !important;font-size:14px}
+.form{background:#fff !important;color:#172033 !important;padding:28px !important;border-radius:12px !important;box-shadow:0 18px 50px rgba(0,0,0,.25)}.form h3{font-size:25px !important;margin:0 0 7px}.form p{margin:0 0 18px !important;color:#667085 !important;font-size:14px}.field{width:100% !important;padding:13px 14px !important;border:1px solid #d5d9e0 !important;border-radius:6px !important;margin-bottom:11px !important;font-size:15px}.form button{width:100% !important;border:0 !important;background:#0b5cab !important;color:#fff !important;font-weight:800 !important;padding:15px !important;border-radius:6px !important;font-size:16px}.note{font-size:12px !important;color:#7a8493 !important;margin-top:10px !important;text-align:center}
+.strip{background:#f5f8fc !important;border-bottom:1px solid #e4e9f0 !important;padding:17px 0}.stripgrid{display:grid !important;grid-template-columns:repeat(4,1fr) !important;gap:12px !important;text-align:center !important;font-weight:700 !important;font-size:14px}.section{padding:75px 0}.center{text-align:center !important;max-width:780px !important;margin:0 auto 42px}.kicker{color:#0b5cab !important;text-transform:uppercase !important;letter-spacing:1.5px !important;font-size:13px !important;font-weight:800}.h2{font-size:38px !important;line-height:1.15 !important;margin:10px 0 14px !important;color:#14233d}.muted{color:#667085 !important;font-size:17px}
+.cards{display:grid !important;grid-template-columns:repeat(3,1fr) !important;gap:20px}.card{border:1px solid #e4e8ee !important;border-radius:10px !important;padding:28px !important;background:#fff}.card h3{margin:0 0 8px !important;font-size:20px}.card p{margin:0 !important;color:#667085}
+.dark{background:#07152f !important;color:#fff}.dark .h2{color:#fff}.dark .muted{color:#c9d5e5}.dark .card{background:#fff !important;color:#172033}.benefits{display:grid !important;grid-template-columns:1fr 1fr !important;gap:0 50px}.benefit{padding:22px 0 !important;border-bottom:1px solid rgba(255,255,255,.14)}.benefit strong{display:block !important;font-size:18px !important;margin-bottom:5px}.benefit span{color:#c9d5e5}
+.process{display:grid !important;grid-template-columns:repeat(4,1fr) !important;gap:18px}.step{padding:25px !important;border-radius:10px !important;background:#f5f8fc}.num{font-size:13px !important;font-weight:800 !important;color:#0b5cab !important;margin-bottom:12px}
+.testimonials{display:grid !important;grid-template-columns:repeat(2,1fr) !important;gap:20px}.quote{border:1px solid #e4e8ee !important;padding:25px !important;border-radius:10px}.stars{font-weight:800 !important;margin-bottom:12px}.quote p{font-size:17px !important;margin:0 0 15px}.quote small{color:#667085}
+.final{background:#0b5cab !important;color:#fff !important;text-align:center !important;padding:65px 0}.final .h2{color:#fff}.final .muted{color:#e7f1ff}.final .btn{margin-top:18px}.faq{max-width:850px !important;margin:auto}.faq details{border-bottom:1px solid #dfe5ed !important;padding:18px 0}.faq summary{font-weight:800 !important;cursor:pointer !important;font-size:17px}.faq p{color:#667085 !important;margin:12px 0 0}
+@media(max-width:900px){.au-grid,.benefits{grid-template-columns:1fr}.h1{font-size:43px}.cards{grid-template-columns:1fr 1fr}.process{grid-template-columns:1fr 1fr}.stripgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.au-wrap{padding:0 18px}.au-hero{padding:52px 0}.h1{font-size:36px}.lead{font-size:17px}.section{padding:52px 0}.h2{font-size:31px}.cards,.process,.testimonials,.stripgrid{grid-template-columns:1fr}.form{padding:22px}}
+
+/* =========================================================
+   ARCUNIFY VOIP LANDING PAGE — ELEMENTOR OVERRIDE LAYER
+   High-specificity, !important styles for Elementor Free.
+   ========================================================= */
+#au-voip,
+#au-voip * {
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+#au-voip {
+  color: #172033 !important;
+  background: #ffffff !important;
+  line-height: 1.55 !important;
+}
+
+#au-voip h1,
+#au-voip h2,
+#au-voip h3,
+#au-voip h4,
+#au-voip h5,
+#au-voip h6,
+#au-voip p,
+#au-voip span,
+#au-voip li,
+#au-voip strong,
+#au-voip small,
+#au-voip summary,
+#au-voip label {
+  text-shadow: none !important;
+}
+
+#au-voip .h1 {
+  color: #ffffff !important;
+  font-size: 54px !important;
+  line-height: 1.08 !important;
+  font-weight: 800 !important;
+  margin: 0 0 20px !important;
+  letter-spacing: -1px !important;
+}
+
+#au-voip .lead {
+  color: #e5edf8 !important;
+  font-size: 20px !important;
+  line-height: 1.6 !important;
+  margin: 0 0 28px !important;
+}
+
+#au-voip .h2 {
+  color: #14233d !important;
+  font-size: 38px !important;
+  line-height: 1.15 !important;
+  font-weight: 700 !important;
+  margin: 10px 0 14px !important;
+}
+
+#au-voip .muted {
+  color: #667085 !important;
+  font-size: 17px !important;
+  line-height: 1.55 !important;
+}
+
+#au-voip .kicker {
+  color: #0b5cab !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  letter-spacing: 1.5px !important;
+}
+
+#au-voip .card {
+  background: #ffffff !important;
+  color: #172033 !important;
+}
+
+#au-voip .card h3 {
+  color: #172033 !important;
+  font-size: 20px !important;
+  line-height: 1.3 !important;
+  font-weight: 700 !important;
+  margin: 0 0 8px !important;
+}
+
+#au-voip .card p {
+  color: #667085 !important;
+  font-size: 15px !important;
+  line-height: 1.55 !important;
+  margin: 0 !important;
+}
+
+#au-voip .icon {
+  color: #0b5cab !important;
+}
+
+#au-voip .dark {
+  background: #07152f !important;
+  color: #ffffff !important;
+}
+
+#au-voip .dark .h2 {
+  color: #ffffff !important;
+}
+
+#au-voip .dark .muted {
+  color: #c9d5e5 !important;
+}
+
+#au-voip .dark .kicker {
+  color: #72b5ff !important;
+}
+
+#au-voip .dark .card h3 {
+  color: #172033 !important;
+}
+
+#au-voip .dark .card p {
+  color: #667085 !important;
+}
+
+#au-voip .dark .card .icon {
+  color: #0b5cab !important;
+}
+
+#au-voip .benefit strong {
+  color: #172033 !important;
+  font-size: 18px !important;
+  line-height: 1.3 !important;
+  font-weight: 700 !important;
+}
+
+#au-voip .benefit span {
+  color: #667085 !important;
+  font-size: 15px !important;
+}
+
+#au-voip .step {
+  color: #172033 !important;
+  background: #f5f8fc !important;
+}
+
+#au-voip .step p {
+  color: #667085 !important;
+}
+
+#au-voip .num {
+  color: #0b5cab !important;
+}
+
+#au-voip .quote {
+  color: #172033 !important;
+  background: #ffffff !important;
+}
+
+#au-voip .quote p {
+  color: #172033 !important;
+}
+
+#au-voip .quote small {
+  color: #667085 !important;
+}
+
+#au-voip .stars {
+  color: #0b5cab !important;
+}
+
+#au-voip .faq summary {
+  color: #172033 !important;
+  font-size: 17px !important;
+  font-weight: 800 !important;
+}
+
+#au-voip .faq p {
+  color: #667085 !important;
+}
+
+#au-voip .final {
+  background: #0b5cab !important;
+  color: #ffffff !important;
+}
+
+#au-voip .final .h2 {
+  color: #ffffff !important;
+}
+
+#au-voip .final .muted {
+  color: #e7f1ff !important;
+}
+
+#au-voip .btn {
+  background: #ffffff !important;
+  color: #0b3260 !important;
+  font-size: 16px !important;
+  font-weight: 800 !important;
+}
+
+#au-voip .trust span {
+  color: #ffffff !important;
+}
+
+#au-voip .strip {
+  color: #172033 !important;
+  background: #f5f8fc !important;
+}
+
+#au-voip .stripgrid div {
+  color: #172033 !important;
+  font-weight: 700 !important;
+}
+
+#au-voip .form h3 {
+  color: #172033 !important;
+}
+
+#au-voip .form p {
+  color: #667085 !important;
+}
+
+#au-voip .form .field {
+  color: #172033 !important;
+  background: #ffffff !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+#au-voip .form .field::placeholder {
+  color: #7a8493 !important;
+  opacity: 1 !important;
+}
+
+#au-voip .form button {
+  color: #ffffff !important;
+  background: #0b5cab !important;
+}
+
+#au-voip .note {
+  color: #7a8493 !important;
+}
+
+#au-voip .section {
+  background: #ffffff !important;
+}
+
+#au-voip .section[style*="background:#f5f8fc"] {
+  background: #f5f8fc !important;
+}
+
+@media (max-width: 900px) {
+  #au-voip .h1 {
+    font-size: 43px !important;
+  }
+  #au-voip .h2 {
+    font-size: 34px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  #au-voip .h1 {
+    font-size: 36px !important;
+  }
+  #au-voip .h2 {
+    font-size: 31px !important;
+  }
+  #au-voip .lead {
+    font-size: 17px !important;
+  }
+}
+
+
+/* ==========================================================================
+   Elementor parity: what the Elementor container and Kit added to this page,
+   so it looks the same without Elementor.
+   ========================================================================== */
+.au-landing-voip {
+	padding: 24px;
+	font-size: 16px;
+}
+
+#au-voip a {
+	line-height: 1.3em;
+}
+
+#au-voip p {
+	margin-block-end: 16px;
+}
+
+#au-voip .form h3 {
+	font-weight: 300;
+	line-height: 1.3em;
+}
+
+/* Form status messages and spam trap (theme additions). */
+#au-voip .au-lp-hp {
+	position: absolute !important;
+	left: -9999px !important;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}
+
+#au-voip .form .au-lp-notice {
+	margin: 0 0 14px !important;
+	padding: 12px 14px;
+	border-radius: 6px;
+	font-size: 14px;
+}
+
+#au-voip .form .au-lp-notice--ok {
+	background: #e8f5ee;
+	color: #146c43 !important;
+}
+
+#au-voip .form .au-lp-notice--error {
+	background: #fdecec;
+	color: #b42318 !important;
+}

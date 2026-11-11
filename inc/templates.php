@@ -44,11 +44,15 @@ function arcunify_native_template_for( $post_id ) {
 	if ( $assigned && 'default' !== $assigned ) {
 		return ''; // Another explicit template (e.g. Elementor Canvas) wins.
 	}
+	$slug    = get_post_field( 'post_name', $post_id );
+	$landing = arcunify_landing_map();
+	if ( isset( $landing[ $slug ] ) ) {
+		return $landing[ $slug ]; // Converted landing pages: always on.
+	}
 	if ( ! arcunify_mod( 'native_pages' ) ) {
 		return '';
 	}
-	$map  = arcunify_template_map();
-	$slug = get_post_field( 'post_name', $post_id );
+	$map = arcunify_template_map();
 	return isset( $map[ $slug ] ) ? $map[ $slug ] : '';
 }
 
