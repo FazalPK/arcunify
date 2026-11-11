@@ -147,20 +147,7 @@ function arcunify_service_pages() {
 		),
 	);
 
-	// A filter may change copy, but a field it leaves empty or drops falls back to the
-	// theme's copy above (a plugin hooking this filter was blanking every field).
-	$filtered = apply_filters( 'arcunify_service_pages', $pages );
-	$filtered = is_array( $filtered ) ? $filtered : array();
-	foreach ( $pages as $key => $defaults ) {
-		$page = isset( $filtered[ $key ] ) && is_array( $filtered[ $key ] ) ? $filtered[ $key ] : array();
-		foreach ( $defaults as $field => $value ) {
-			if ( ! isset( $page[ $field ] ) || '' === $page[ $field ] || array() === $page[ $field ] ) {
-				$page[ $field ] = $value;
-			}
-		}
-		$filtered[ $key ] = $page;
-	}
-	return $filtered;
+	return apply_filters( 'arcunify_service_pages', $pages );
 }
 
 /**
