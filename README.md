@@ -161,3 +161,17 @@ No horizontal overflow on all 9 pages at 320, 375, 414, 768, 1024, 1280, 1920px.
 Contact form tested end to end (validation, stored enquiry, honeypot). Keyboard: mega-menu opens with
 Enter, Tab moves into it, Esc closes and returns focus; mobile menu traps focus and
 closes on Esc. `prefers-reduced-motion` disables the arc animation and reveal.
+
+## Deploy (from this computer)
+
+`deploy.ps1` uploads the theme to `wp-content/themes/arcunify` on arcunify.com over FTPS with
+rclone. One-time setup: `rclone config` → new remote named `arcunify`, type `ftp`, with the FTP
+host, full FTP username and password, and `explicit_tls = true`.
+
+```powershell
+.\deploy.ps1 backup          # copy the server theme to ..\_backups\arcunify\<date-time>
+.\deploy.ps1 check           # list files that differ
+.\deploy.ps1 push -DryRun    # preview the upload
+.\deploy.ps1 push            # upload files that are newer here (never deletes on the server)
+.\deploy.ps1 push -Force     # upload every differing file, even if the server copy is newer
+```
