@@ -179,12 +179,18 @@ host, full FTP username and password, and `explicit_tls = true`.
 ## Automatic deploy on push (GitHub webhook)
 
 `tools/deploy-hook.php` deploys every push to `main` without GitHub Actions or FTP.
-GitHub calls it, it checks the signature, downloads that commit from GitHub and copies changed
-files into `wp-content/themes/arcunify` (it never deletes files). Runs are logged to
-`au-deploy.log` next to the config file.
+GitHub calls it, it checks the signature, looks up the latest commit of `main`, downloads it as a
+`.tar.gz` and writes changed files into `wp-content/themes/arcunify` (staged first; it never
+deletes files). Needs PHP zlib and outbound HTTPS, not ZipArchive. Runs are logged to
+`/home/teksetda/au-deploy.log`; a GitHub "ping" logs what the server supports.
 
-1. Upload `tools/deploy-hook.php` to the WordPress root as `au-deploy.php`.
-2. Copy `tools/au-deploy-config.example.php` to `au-deploy-config.php`, set a random secret
-   (32+ characters) and upload it one level above the WordPress root, e.g. `/home/teksetda/`.
+1. Upload `tools/deploy-hook.php` to the WordPress root (`/home/teksetda/arcunify.com/`) as `au-deploy.php`.
+2. Make `au-deploy-config.php` from `tools/au-deploy-config.example.php` **outside this repo**, set a
+   random secret (32+ characters) and upload it to `/home/teksetda/` (above the WordPress root).
+   Never commit it (it is in `.gitignore`).
 3. GitHub → Settings → Webhooks → Add webhook: Payload URL `https://arcunify.com/au-deploy.php`,
    content type `application/json`, the same secret, "Just the push event".
+
+Changing the hook itself means uploading `au-deploy.php` again: the hook does not update itself.
+Repo-only files (`tools/`, `README.md`, `deploy.ps1`, `build.sh`) are never deployed; delete them
+from the server theme folder if they were ever uploaded by hand.

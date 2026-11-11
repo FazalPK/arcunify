@@ -11,14 +11,15 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Cache-busting version: file mtime in development, theme version otherwise.
+ * Cache-busting version: the file's modified time, so browsers fetch a file again as
+ * soon as a deploy changes it. Falls back to the theme version.
  *
  * @param string $rel Path relative to the theme.
  * @return string
  */
 function arcunify_asset_ver( $rel ) {
 	$path = ARCUNIFY_DIR . '/' . $rel;
-	return ( defined( 'WP_DEBUG' ) && WP_DEBUG && file_exists( $path ) ) ? (string) filemtime( $path ) : ARCUNIFY_VERSION;
+	return file_exists( $path ) ? (string) filemtime( $path ) : ARCUNIFY_VERSION;
 }
 
 /**

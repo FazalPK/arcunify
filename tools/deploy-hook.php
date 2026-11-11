@@ -15,9 +15,12 @@
  *
  * What it does on a push to main
  * - Verifies GitHub's HMAC signature (X-Hub-Signature-256); anything else gets 403.
- * - Downloads that exact commit as a .tar.gz from GitHub (public repo, no token needed)
- *   and reads it in memory. Needs only zlib, not ZipArchive.
- * - Writes changed files into wp-content/themes/arcunify. Never deletes server files.
+ * - Looks up the current commit of main on GitHub and deploys that (the push only
+ *   triggers it), so a redelivered or late webhook can never roll the theme back.
+ * - Downloads that commit as a .tar.gz (public repo, no token needed) and reads it in
+ *   memory. Needs only zlib, not ZipArchive.
+ * - Writes changed files into wp-content/themes/arcunify: all are staged first and
+ *   swapped in only if every write succeeded. Never deletes server files.
  * - Logs every run to au-deploy.log next to the config file (not web-readable).
  *   A GitHub "ping" logs what this server supports.
  *
@@ -253,8 +256,10 @@ function au_deploy( $sha ) {
 		throw new RuntimeException( 'Unexpected archive layout (no style.css at the top).' );
 	}
 
-	$changed = array();
-	$failed  = array();
+	// Phase 1: stage every changed file as <file>.au-tmp. If anything fails, remove the
+	// staged copies and stop, so the live theme is never left half old, half new.
+	$staged = array(); // relative => tmp path.
+	$failed = array();
 	foreach ( $files as $relative => $contents ) {
 		if ( au_is_excluded( $relative ) ) {
 			continue;
@@ -274,27 +279,69 @@ function au_deploy( $sha ) {
 			continue;
 		}
 		$tmp = $target . '.au-tmp';
-		if ( false === file_put_contents( $tmp, $contents ) || ! rename( $tmp, $target ) ) {
+		if ( false === @file_put_contents( $tmp, $contents ) ) {
 			@unlink( $tmp );
 			$failed[] = "$relative (cannot write)";
 			continue;
 		}
-		@chmod( $target, 0644 );
+		@chmod( $tmp, 0644 );
+		$staged[ $relative ] = $tmp;
+	}
+	if ( $failed ) {
+		foreach ( $staged as $tmp ) {
+			@unlink( $tmp );
+		}
+		throw new RuntimeException( count( $failed ) . ' file(s) could not be written, nothing was changed: ' . implode( ', ', $failed ) );
+	}
+
+	// Phase 2: swap the staged files in. functions.php goes last so it never loads
+	// an include that has not been updated yet.
+	if ( isset( $staged['functions.php'] ) ) {
+		$last = $staged['functions.php'];
+		unset( $staged['functions.php'] );
+		$staged['functions.php'] = $last;
+	}
+	$changed = array();
+	foreach ( $staged as $relative => $tmp ) {
+		$target = AU_THEME_DIR . '/' . $relative;
+		if ( ! rename( $tmp, $target ) ) {
+			@unlink( $tmp );
+			$failed[] = $relative;
+			continue;
+		}
 		if ( function_exists( 'opcache_invalidate' ) && '.php' === substr( $relative, -4 ) ) {
 			@opcache_invalidate( $target, true );
 		}
 		$changed[] = $relative;
 	}
-
 	if ( $failed ) {
-		throw new RuntimeException( count( $failed ) . ' file(s) not written: ' . implode( ', ', $failed ) . ( $changed ? ' | written: ' . implode( ', ', $changed ) : '' ) );
+		throw new RuntimeException( 'Could not replace ' . implode( ', ', $failed ) . ' | replaced: ' . implode( ', ', $changed ) );
 	}
 	return $changed;
+}
+
+/**
+ * Current commit of the deploy branch, read from GitHub. The webhook is only a trigger:
+ * deploying the tip (not the payload's sha) means a redelivered or out-of-order webhook
+ * can never roll the theme back, and no commit outside the branch can be deployed.
+ */
+function au_branch_tip() {
+	$refs = au_http_get( 'https://github.com/' . AU_REPO . '.git/info/refs?service=git-upload-pack' );
+	if ( ! preg_match( '#([0-9a-f]{40}) refs/heads/' . preg_quote( AU_BRANCH, '#' ) . '\n#', $refs, $m ) ) {
+		throw new RuntimeException( 'Cannot find the latest commit of ' . AU_BRANCH . ' on GitHub.' );
+	}
+	return $m[1];
 }
 
 // ---------------------------------------------------------------------------
 // Request handling
 // ---------------------------------------------------------------------------
+
+// A copy that is not in the WordPress root (e.g. one left inside the theme) does nothing.
+if ( ! is_file( __DIR__ . '/wp-load.php' ) ) {
+	au_respond( 404, 'Not found' );
+	exit;
+}
 
 if ( 'POST' !== ( $_SERVER['REQUEST_METHOD'] ?? '' ) ) {
 	au_respond( 405, 'Method not allowed' );
@@ -303,8 +350,8 @@ if ( 'POST' !== ( $_SERVER['REQUEST_METHOD'] ?? '' ) ) {
 
 $config = @include AU_PRIVATE . '/au-deploy-config.php';
 $secret = is_array( $config ) ? (string) ( $config['secret'] ?? '' ) : '';
-if ( strlen( $secret ) < 32 ) {
-	au_log( 'ERROR config missing or secret shorter than 32 characters' );
+if ( strlen( $secret ) < 32 || false !== stripos( $secret, 'PASTE' ) ) {
+	au_log( 'ERROR config missing, or the secret is shorter than 32 characters or still the example value' );
 	au_respond( 500, 'Not configured' );
 	exit;
 }
@@ -357,10 +404,11 @@ if ( ! $lock || ! flock( $lock, LOCK_EX ) ) {
 }
 
 try {
-	$changed = au_deploy( $sha );
-	au_log( sprintf( 'DEPLOYED %s by %s: %d file(s)%s', substr( $sha, 0, 7 ), $payload['pusher']['name'] ?? '?', count( $changed ), $changed ? ' — ' . implode( ', ', $changed ) : '' ) );
+	$tip     = au_branch_tip();
+	$changed = au_deploy( $tip );
+	au_log( sprintf( 'DEPLOYED %s (push %s by %s): %d file(s)%s', substr( $tip, 0, 7 ), substr( $sha, 0, 7 ), $payload['pusher']['name'] ?? '?', count( $changed ), $changed ? ' — ' . implode( ', ', $changed ) : '' ) );
 } catch ( Throwable $e ) {
-	au_log( 'FAILED ' . substr( $sha, 0, 7 ) . ': ' . $e->getMessage() );
+	au_log( 'FAILED push ' . substr( $sha, 0, 7 ) . ': ' . $e->getMessage() );
 } finally {
 	flock( $lock, LOCK_UN );
 	fclose( $lock );

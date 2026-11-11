@@ -40,6 +40,7 @@ $exclude = @(
     '--exclude', '.gitattributes',
     '--exclude', '.vscode/**',
     '--exclude', 'tools/**',
+    '--exclude', 'au-deploy-config.php',
     '--exclude', 'README.md',
     '--exclude', 'arcunify-conversation-export.md',
     '--exclude', 'deploy.ps1',
