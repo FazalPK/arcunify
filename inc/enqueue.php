@@ -26,24 +26,28 @@ function arcunify_asset_ver( $rel ) {
  * Enqueue front-end assets.
  */
 function arcunify_enqueue_assets() {
+	$landing = arcunify_landing_template();
+	$script  = array(
+		'in_footer' => true,
+		'strategy'  => 'defer',
+	);
+
+	// The Managed IT landing page carries its own complete stylesheet and script.
+	if ( 'page-templates/landing-managed.php' === $landing ) {
+		wp_enqueue_style( 'arcunify-landing-managed', ARCUNIFY_URI . '/assets/css/landing-managed.css', array(), arcunify_asset_ver( 'assets/css/landing-managed.css' ) );
+		wp_enqueue_script( 'arcunify-landing', ARCUNIFY_URI . '/assets/js/landing.js', array(), arcunify_asset_ver( 'assets/js/landing.js' ), $script );
+		return;
+	}
+
 	wp_enqueue_style( 'arcunify', ARCUNIFY_URI . '/assets/css/theme.css', array(), arcunify_asset_ver( 'assets/css/theme.css' ) );
 
-	if ( arcunify_is_landing_view() ) {
+	if ( 'page-templates/landing-voip.php' === $landing ) {
 		wp_enqueue_style( 'arcunify-landing-voip', ARCUNIFY_URI . '/assets/css/landing-voip.css', array( 'arcunify' ), arcunify_asset_ver( 'assets/css/landing-voip.css' ) );
 	} elseif ( arcunify_is_native_view() ) {
 		wp_enqueue_style( 'arcunify-sections', ARCUNIFY_URI . '/assets/css/sections.css', array( 'arcunify' ), arcunify_asset_ver( 'assets/css/sections.css' ) );
 	}
 
-	wp_enqueue_script(
-		'arcunify',
-		ARCUNIFY_URI . '/assets/js/theme.js',
-		array(),
-		arcunify_asset_ver( 'assets/js/theme.js' ),
-		array(
-			'in_footer' => true,
-			'strategy'  => 'defer',
-		)
-	);
+	wp_enqueue_script( 'arcunify', ARCUNIFY_URI . '/assets/js/theme.js', array(), arcunify_asset_ver( 'assets/js/theme.js' ), $script );
 }
 add_action( 'wp_enqueue_scripts', 'arcunify_enqueue_assets', 20 );
 

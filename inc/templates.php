@@ -41,13 +41,17 @@ function arcunify_native_template_for( $post_id ) {
 	if ( $assigned && 0 === strpos( $assigned, 'page-templates/' ) ) {
 		return $assigned;
 	}
-	if ( $assigned && 'default' !== $assigned ) {
+	// "aul-landing" is the landing plugin's template; the theme's copy replaces it (inc/landing.php).
+	if ( $assigned && 'default' !== $assigned && 'aul-landing' !== $assigned ) {
 		return ''; // Another explicit template (e.g. Elementor Canvas) wins.
 	}
 	$slug    = get_post_field( 'post_name', $post_id );
 	$landing = arcunify_landing_map();
 	if ( isset( $landing[ $slug ] ) ) {
 		return $landing[ $slug ]; // Converted landing pages: always on.
+	}
+	if ( 'aul-landing' === $assigned ) {
+		return ''; // The plugin is active and still draws this page.
 	}
 	if ( ! arcunify_mod( 'native_pages' ) ) {
 		return '';
