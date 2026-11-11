@@ -15,11 +15,13 @@
  *
  * What it does on a push to main
  * - Verifies GitHub's HMAC signature (X-Hub-Signature-256); anything else gets 403.
- * - Downloads that exact commit as a zip from GitHub (public repo, no token needed).
- * - Copies changed files into wp-content/themes/arcunify. Never deletes server files.
+ * - Downloads that exact commit as a .tar.gz from GitHub (public repo, no token needed)
+ *   and reads it in memory. Needs only zlib, not ZipArchive.
+ * - Writes changed files into wp-content/themes/arcunify. Never deletes server files.
  * - Logs every run to au-deploy.log next to the config file (not web-readable).
+ *   A GitHub "ping" logs what this server supports.
  *
- * Requires PHP 7.4+, ZipArchive, and outbound HTTPS (curl or allow_url_fopen).
+ * Requires PHP 7.4+, zlib (gzdecode), and outbound HTTPS (curl or allow_url_fopen).
  */
 
 // ---------------------------------------------------------------------------
@@ -57,34 +59,159 @@ function au_log( $line ) {
 	@file_put_contents( AU_PRIVATE . '/au-deploy.log', gmdate( 'Y-m-d H:i:s' ) . ' UTC  ' . $line . "\n", FILE_APPEND | LOCK_EX );
 }
 
-function au_download( $url, $dest ) {
+/**
+ * What this server can do, for the ping log line.
+ */
+function au_capabilities() {
+	$yes = static function ( $ok ) {
+		return $ok ? 'yes' : 'NO';
+	};
+	return sprintf(
+		'php=%s curl=%s url_fopen=%s zlib=%s theme_dir=%s writable=%s',
+		PHP_VERSION,
+		$yes( function_exists( 'curl_init' ) ),
+		$yes( (bool) ini_get( 'allow_url_fopen' ) ),
+		$yes( function_exists( 'gzdecode' ) ),
+		$yes( is_dir( AU_THEME_DIR ) ),
+		$yes( is_writable( AU_THEME_DIR ) )
+	);
+}
+
+/**
+ * GET a URL and return the body. Throws unless the response is HTTP 200.
+ */
+function au_http_get( $url ) {
 	if ( function_exists( 'curl_init' ) ) {
-		$fh = fopen( $dest, 'wb' );
 		$ch = curl_init( $url );
 		curl_setopt_array(
 			$ch,
 			array(
-				CURLOPT_FILE           => $fh,
+				CURLOPT_RETURNTRANSFER => true,
 				CURLOPT_FOLLOWLOCATION => true,
+				CURLOPT_MAXREDIRS      => 5,
 				CURLOPT_USERAGENT      => 'arcunify-deploy-hook',
+				CURLOPT_CONNECTTIMEOUT => 20,
 				CURLOPT_TIMEOUT        => 120,
-				CURLOPT_FAILONERROR    => true,
 			)
 		);
-		$ok    = curl_exec( $ch );
-		$error = curl_error( $ch );
+		$body   = curl_exec( $ch );
+		$status = (int) curl_getinfo( $ch, CURLINFO_RESPONSE_CODE );
+		$error  = curl_error( $ch );
 		curl_close( $ch );
-		fclose( $fh );
-		if ( ! $ok ) {
-			throw new RuntimeException( 'Download failed: ' . $error );
+		if ( false === $body || 200 !== $status ) {
+			throw new RuntimeException( "Download failed (HTTP $status) $error" );
 		}
-		return;
+		return $body;
 	}
-	$context = stream_context_create( array( 'http' => array( 'user_agent' => 'arcunify-deploy-hook', 'timeout' => 120 ) ) );
-	$data    = @file_get_contents( $url, false, $context );
-	if ( false === $data || false === file_put_contents( $dest, $data ) ) {
-		throw new RuntimeException( 'Download failed (no curl; allow_url_fopen may be off).' );
+	if ( ! ini_get( 'allow_url_fopen' ) ) {
+		throw new RuntimeException( 'Download failed: neither curl nor allow_url_fopen is available.' );
 	}
+	$context = stream_context_create(
+		array(
+			'http' => array(
+				'user_agent'    => 'arcunify-deploy-hook',
+				'timeout'       => 120,
+				'ignore_errors' => true,
+			),
+		)
+	);
+	$body   = @file_get_contents( $url, false, $context );
+	$status = 0;
+	foreach ( (array) ( $http_response_header ?? array() ) as $header ) {
+		if ( preg_match( '#^HTTP/\S+\s+(\d{3})#', $header, $m ) ) {
+			$status = (int) $m[1]; // The last status line wins (after redirects).
+		}
+	}
+	if ( false === $body || 200 !== $status ) {
+		throw new RuntimeException( "Download failed (HTTP $status)" );
+	}
+	return $body;
+}
+
+/**
+ * Parse a POSIX/pax tar archive held in memory.
+ *
+ * @return array path => file contents (regular files only).
+ */
+function au_untar( $tar ) {
+	$files  = array();
+	$length = strlen( $tar );
+	$offset = 0;
+	$pax    = array(); // Per-entry pax header (applies to the next entry only).
+	$global = array(); // Global pax header (applies to all following entries).
+
+	while ( $offset + 512 <= $length ) {
+		$header = substr( $tar, $offset, 512 );
+		if ( "\0" === $header[0] && '' === trim( $header, "\0" ) ) {
+			break; // End-of-archive marker.
+		}
+
+		// Header checksum: sum of all bytes with the checksum field read as spaces.
+		$stored = au_octal( substr( $header, 148, 8 ) );
+		$sum    = 0;
+		$check  = substr_replace( $header, '        ', 148, 8 );
+		for ( $i = 0; $i < 512; $i++ ) {
+			$sum += ord( $check[ $i ] );
+		}
+		if ( $sum !== $stored ) {
+			throw new RuntimeException( 'Archive is corrupt (bad tar header checksum).' );
+		}
+
+		$name   = rtrim( substr( $header, 0, 100 ), "\0" );
+		$prefix = rtrim( substr( $header, 345, 155 ), "\0" );
+		$size   = au_octal( substr( $header, 124, 12 ) );
+		$type   = $header[156];
+		$data   = substr( $tar, $offset + 512, $size );
+		$offset += 512 + (int) ( ceil( $size / 512 ) * 512 );
+
+		if ( 'x' === $type || 'g' === $type ) {
+			$records = au_pax_records( $data );
+			if ( 'g' === $type ) {
+				$global = array_merge( $global, $records );
+			} else {
+				$pax = $records;
+			}
+			continue;
+		}
+
+		$path = $pax['path'] ?? ( '' !== $prefix ? $prefix . '/' . $name : $name );
+		$pax  = array();
+
+		if ( '0' === $type || "\0" === $type ) {
+			$files[ $path ] = $data;
+		}
+		// Directories ('5') are created as needed; links and other types are ignored.
+	}
+	return $files;
+}
+
+/**
+ * Read a tar numeric field (octal ASCII, space/NUL padded).
+ */
+function au_octal( $field ) {
+	$field = trim( $field, " \0" );
+	if ( ! preg_match( '/^[0-7]+$/', $field ) ) {
+		throw new RuntimeException( 'Archive is corrupt (bad tar header).' );
+	}
+	return octdec( $field );
+}
+
+/**
+ * Parse pax extended header records ("<len> key=value\n").
+ */
+function au_pax_records( $data ) {
+	$records = array();
+	$pos     = 0;
+	while ( $pos < strlen( $data ) && preg_match( '/\G(\d+) ([^=]+)=/', $data, $m, 0, $pos ) ) {
+		$len  = (int) $m[1];
+		$head = strlen( $m[0] );
+		if ( $len < $head + 1 ) {
+			break;
+		}
+		$records[ $m[2] ] = substr( $data, $pos + $head, $len - $head - 1 );
+		$pos             += $len;
+	}
+	return $records;
 }
 
 function au_is_excluded( $relative ) {
@@ -92,42 +219,65 @@ function au_is_excluded( $relative ) {
 	return in_array( $first, AU_EXCLUDE, true ) || in_array( $relative, AU_EXCLUDE, true );
 }
 
-function au_rmdir( $dir ) {
-	if ( ! is_dir( $dir ) ) {
-		return;
-	}
-	$items = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $dir, FilesystemIterator::SKIP_DOTS ), RecursiveIteratorIterator::CHILD_FIRST );
-	foreach ( $items as $item ) {
-		$item->isDir() ? @rmdir( $item->getPathname() ) : @unlink( $item->getPathname() );
-	}
-	@rmdir( $dir );
-}
-
 /**
- * Copy changed files from $src into the theme. Returns the list of updated paths.
+ * Download a commit and write changed files into the theme.
+ *
+ * @return array Paths that were updated.
  */
-function au_sync( $src ) {
+function au_deploy( $sha ) {
+	if ( ! function_exists( 'gzdecode' ) ) {
+		throw new RuntimeException( 'PHP zlib (gzdecode) is not available.' );
+	}
+	if ( ! is_dir( AU_THEME_DIR ) ) {
+		throw new RuntimeException( 'Theme folder not found: ' . AU_THEME_DIR );
+	}
+
+	$gz  = au_http_get( 'https://codeload.github.com/' . AU_REPO . '/tar.gz/' . $sha );
+	$tar = gzdecode( $gz );
+	unset( $gz );
+	if ( false === $tar ) {
+		throw new RuntimeException( 'Download is not a valid .tar.gz.' );
+	}
+	$entries = au_untar( $tar );
+	unset( $tar );
+
+	// GitHub archives contain one top folder, e.g. arcunify-<sha>/. Strip it.
+	$files = array();
+	foreach ( $entries as $path => $contents ) {
+		$parts = explode( '/', $path, 2 );
+		if ( 2 === count( $parts ) && '' !== $parts[1] ) {
+			$files[ $parts[1] ] = $contents;
+		}
+	}
+	if ( ! isset( $files['style.css'] ) ) {
+		throw new RuntimeException( 'Unexpected archive layout (no style.css at the top).' );
+	}
+
 	$changed = array();
-	$items   = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $src, FilesystemIterator::SKIP_DOTS ), RecursiveIteratorIterator::SELF_FIRST );
-	foreach ( $items as $item ) {
-		$relative = str_replace( '\\', '/', substr( $item->getPathname(), strlen( $src ) + 1 ) );
+	$failed  = array();
+	foreach ( $files as $relative => $contents ) {
 		if ( au_is_excluded( $relative ) ) {
 			continue;
 		}
-		$target = AU_THEME_DIR . '/' . $relative;
-		if ( $item->isDir() ) {
-			if ( ! is_dir( $target ) && ! mkdir( $target, 0755, true ) ) {
-				throw new RuntimeException( "Cannot create folder $relative" );
-			}
+		$segments = explode( '/', $relative );
+		if ( in_array( '..', $segments, true ) || in_array( '', $segments, true ) || false !== strpos( $relative, '\\' ) ) {
+			$failed[] = "$relative (unsafe path)";
 			continue;
 		}
-		if ( is_file( $target ) && md5_file( $target ) === md5_file( $item->getPathname() ) ) {
+		$target = AU_THEME_DIR . '/' . $relative;
+		if ( is_file( $target ) && md5_file( $target ) === md5( $contents ) ) {
+			continue;
+		}
+		$dir = dirname( $target );
+		if ( ! is_dir( $dir ) && ! mkdir( $dir, 0755, true ) ) {
+			$failed[] = "$relative (cannot create folder)";
 			continue;
 		}
 		$tmp = $target . '.au-tmp';
-		if ( ! copy( $item->getPathname(), $tmp ) || ! rename( $tmp, $target ) ) {
+		if ( false === file_put_contents( $tmp, $contents ) || ! rename( $tmp, $target ) ) {
 			@unlink( $tmp );
-			throw new RuntimeException( "Cannot write $relative" );
+			$failed[] = "$relative (cannot write)";
+			continue;
 		}
 		@chmod( $target, 0644 );
 		if ( function_exists( 'opcache_invalidate' ) && '.php' === substr( $relative, -4 ) ) {
@@ -135,48 +285,11 @@ function au_sync( $src ) {
 		}
 		$changed[] = $relative;
 	}
+
+	if ( $failed ) {
+		throw new RuntimeException( count( $failed ) . ' file(s) not written: ' . implode( ', ', $failed ) . ( $changed ? ' | written: ' . implode( ', ', $changed ) : '' ) );
+	}
 	return $changed;
-}
-
-function au_deploy( $sha ) {
-	if ( ! class_exists( 'ZipArchive' ) ) {
-		throw new RuntimeException( 'PHP ZipArchive is not available.' );
-	}
-	if ( ! is_dir( AU_THEME_DIR ) ) {
-		throw new RuntimeException( 'Theme folder not found: ' . AU_THEME_DIR );
-	}
-
-	$work = sys_get_temp_dir() . '/au-deploy-' . $sha;
-	$zip  = $work . '.zip';
-	au_rmdir( $work );
-
-	try {
-		au_download( 'https://codeload.github.com/' . AU_REPO . '/zip/' . $sha, $zip );
-
-		$archive = new ZipArchive();
-		if ( true !== $archive->open( $zip ) ) {
-			throw new RuntimeException( 'Downloaded file is not a valid zip.' );
-		}
-		for ( $i = 0; $i < $archive->numFiles; $i++ ) {
-			$name = $archive->getNameIndex( $i );
-			if ( false !== strpos( $name, '..' ) || '/' === $name[0] ) {
-				throw new RuntimeException( "Unsafe path in zip: $name" );
-			}
-		}
-		$archive->extractTo( $work );
-		$archive->close();
-
-		// GitHub zips contain one top folder, e.g. arcunify-<sha>/.
-		$roots = glob( $work . '/*', GLOB_ONLYDIR );
-		if ( 1 !== count( $roots ) || ! is_file( $roots[0] . '/style.css' ) ) {
-			throw new RuntimeException( 'Unexpected zip layout (no style.css at the top).' );
-		}
-
-		return au_sync( $roots[0] );
-	} finally {
-		au_rmdir( $work );
-		@unlink( $zip );
-	}
 }
 
 // ---------------------------------------------------------------------------
@@ -208,7 +321,7 @@ $event   = $_SERVER['HTTP_X_GITHUB_EVENT'] ?? '';
 $payload = json_decode( $body, true );
 
 if ( 'ping' === $event ) {
-	au_log( 'PING ok' );
+	au_log( 'PING ok  ' . au_capabilities() );
 	au_respond( 200, 'pong' );
 	exit;
 }
