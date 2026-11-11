@@ -22,6 +22,21 @@ $service = $services[ $key ];
 $page    = $pages[ $key ];
 $variant = $page['variant'];
 
+// TEMP diagnostic (remove after use): ?au_debug=1 prints filter callbacks and copy fields.
+if ( isset( $_GET['au_debug'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+	global $wp_filter;
+	$au_cbs = array();
+	if ( isset( $wp_filter['arcunify_service_pages'] ) ) {
+		foreach ( $wp_filter['arcunify_service_pages']->callbacks as $prio => $cbs ) {
+			foreach ( $cbs as $id => $cb ) {
+				$au_cbs[] = $prio . ':' . $id;
+			}
+		}
+	}
+	$au_ref = new ReflectionFunction( 'arcunify_service_pages' );
+	echo "\n<!-- au_debug key={$key} file=" . esc_html( $au_ref->getFileName() . ':' . $au_ref->getStartLine() ) . ' filters=' . esc_html( implode( ',', $au_cbs ) ) . ' fields=' . esc_html( wp_json_encode( array_map( static function ( $v ) { return is_array( $v ) ? count( $v ) : strlen( (string) $v ); }, $page ) ) ) . ' raw_title=' . esc_html( __( 'Smarter Communication For Modern Teams', 'arcunify' ) ) . " -->\n";
+}
+
 get_header();
 ?>
 <main id="content" class="au-main au-service-page au-service-page--<?php echo esc_attr( $variant ); ?>">
