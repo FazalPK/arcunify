@@ -69,23 +69,6 @@
 		</div>
 	</section>
 
-	<section class="au-proof" data-theme="dark" aria-label="At a glance">
-	<div class="au-container au-proof__inner">
-							<div class="au-logos">
-								<ul class="au-logos__list">
-											<li><img width="47" height="51" src="https://arcunify.com/wp-content/uploads/2026/06/Vector-8.png" class="au-logos__img" alt="" loading="lazy" decoding="async" /></li>
-											<li><img width="57" height="41" src="https://arcunify.com/wp-content/uploads/2026/06/Vector-7.png" class="au-logos__img" alt="" loading="lazy" decoding="async" /></li>
-											<li><img width="78" height="34" src="https://arcunify.com/wp-content/uploads/2026/06/Vector-6.png" class="au-logos__img" alt="" loading="lazy" decoding="async" /></li>
-											<li><img width="51" height="50" src="https://arcunify.com/wp-content/uploads/2026/06/Vector-5.png" class="au-logos__img" alt="" loading="lazy" decoding="async" /></li>
-											<li><img width="53" height="53" src="https://arcunify.com/wp-content/uploads/2026/06/Vector-4.png" class="au-logos__img" alt="" loading="lazy" decoding="async" /></li>
-											<li><img width="38" height="38" src="https://arcunify.com/wp-content/uploads/2026/06/Vector-3.png" class="au-logos__img" alt="" loading="lazy" decoding="async" /></li>
-											<li><img width="70" height="32" src="https://arcunify.com/wp-content/uploads/2026/06/Vector-2.png" class="au-logos__img" alt="" loading="lazy" decoding="async" /></li>
-											<li><img width="51" height="51" src="https://arcunify.com/wp-content/uploads/2026/06/Vector-1.png" class="au-logos__img" alt="" loading="lazy" decoding="async" /></li>
-											<li><img width="59" height="58" src="https://arcunify.com/wp-content/uploads/2026/06/Vector.png" class="au-logos__img" alt="" loading="lazy" decoding="async" /></li>
-									</ul>
-			</div>
-			</div>
-</section>
 <section class="au-section au-why au-why--paper" data-theme="paper" aria-labelledby="au-why-title">
 	<div class="au-container">
 		<div class="au-sh au-sh--split">

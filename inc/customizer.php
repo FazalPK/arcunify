@@ -5,7 +5,7 @@
  * One schema drives registration, sanitisation and defaults, so adding a field
  * is one line. Values are read with arcunify_mod( 'key' ).
  *
- * Proof fields (counters, logos, service stats) default to empty/off: they render
+ * Proof fields (counters, service stats) default to empty/off: they render
  * only after ArcUnify supplies verified values.
  *
  * @package ArcUnify
@@ -55,15 +55,7 @@ function arcunify_settings_schema() {
 		'counter1_value' => array( 'au_proof', 'text', __( 'Tech Experts (number)', 'arcunify' ), '' ),
 		'counter2_value' => array( 'au_proof', 'text', __( 'Client Satisfaction (number, %)', 'arcunify' ), '' ),
 		'counter3_value' => array( 'au_proof', 'text', __( 'Industries Served (number)', 'arcunify' ), '' ),
-		'show_logos'     => array( 'au_proof', 'checkbox', __( 'Show logo strip', 'arcunify' ), true, __( 'Logo slots below take priority; otherwise the image paths list is used. Set alt text on each image in the Media Library.', 'arcunify' ) ),
-		'logo_paths'     => array( 'au_proof', 'textarea', __( 'Logo image paths (one per line)', 'arcunify' ), "/wp-content/uploads/2026/06/Vector-8.png\n/wp-content/uploads/2026/06/Vector-7.png\n/wp-content/uploads/2026/06/Vector-6.png\n/wp-content/uploads/2026/06/Vector-5.png\n/wp-content/uploads/2026/06/Vector-4.png\n/wp-content/uploads/2026/06/Vector-3.png\n/wp-content/uploads/2026/06/Vector-2.png\n/wp-content/uploads/2026/06/Vector-1.png\n/wp-content/uploads/2026/06/Vector.png", __( 'The logos currently on the live site. Used when no Logo slot is set.', 'arcunify' ) ),
-		'logos_label'    => array( 'au_proof', 'text', __( 'Logo strip caption (optional)', 'arcunify' ), '' ),
 	);
-
-	for ( $i = 1; $i <= 8; $i++ ) {
-		/* translators: %d: logo number. */
-		$schema[ 'logo' . $i ] = array( 'au_proof', 'image', sprintf( __( 'Logo %d', 'arcunify' ), $i ), 0 );
-	}
 
 	// Prefilled where the live site states the same figure in its own copy.
 	$stat_defaults = array(
@@ -135,7 +127,7 @@ function arcunify_customize_register( $wp_customize ) {
 	$sections = array(
 		'au_contact'  => __( 'Contact & header', 'arcunify' ),
 		'au_home'     => __( 'Homepage', 'arcunify' ),
-		'au_proof'    => __( 'Proof: counters, logos, stats', 'arcunify' ),
+		'au_proof'    => __( 'Proof: counters and stats', 'arcunify' ),
 		'au_pricing'  => __( 'Pricing plans', 'arcunify' ),
 		'au_pages'    => __( 'Pages & contact form', 'arcunify' ),
 		'au_advanced' => __( 'Advanced', 'arcunify' ),
