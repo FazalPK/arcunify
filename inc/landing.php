@@ -131,7 +131,7 @@ function arcunify_landing_fields() {
 		'email'     => array( __( 'Business email', 'arcunify' ), true ),
 		'phone'     => array( __( 'Phone', 'arcunify' ), true ),
 		'company'   => array( __( 'Company', 'arcunify' ), false ),
-		'employees' => array( __( 'Number of employees', 'arcunify' ), false ),
+		'employees' => array( __( 'People taking calls', 'arcunify' ), false ),
 		'message'   => array( __( 'Communication needs', 'arcunify' ), false ),
 	);
 }
@@ -421,7 +421,7 @@ function arcunify_render_landing_form() {
 		'limit'   => __( 'Too many requests from this connection. Please call or email us instead.', 'arcunify' ),
 	);
 	?>
-<div class="form" id="consultation"><h3>Get Your Free Consultation</h3><p>Tell us about your communication needs and we'll help identify the right VoIP solution for your business.</p>
+<div class="form" id="consultation"><h3>Get Your Free Phone Quote</h3><p>Tell us how your business takes calls today and we'll recommend a simple setup and a clear monthly price.</p>
 	<?php if ( $sent ) : ?>
 <p class="au-lp-notice au-lp-notice--ok" role="status"><strong><?php esc_html_e( 'Thank you, your request has been sent.', 'arcunify' ); ?></strong> <?php esc_html_e( 'A member of our team will contact you.', 'arcunify' ); ?></p>
 <script>window.dataLayer=window.dataLayer||[];window.dataLayer.push({event:'arcunify_lead',form:'<?php echo esc_js( get_post_field( 'post_name', get_queried_object_id() ) ); ?>'});</script>
@@ -433,9 +433,9 @@ function arcunify_render_landing_form() {
 <input type="hidden" name="action" value="arcunify_landing"><input type="hidden" name="au_ts" value="<?php echo esc_attr( time() ); ?>"><?php wp_nonce_field( 'au_landing', 'au_contact_nonce', false ); ?>
 <div class="au-lp-hp" aria-hidden="true"><input type="text" name="au_website" tabindex="-1" autocomplete="off"></div>
 <input class="field" type="text" name="au_name" placeholder="Full Name" autocomplete="name" aria-label="Full Name" required><input class="field" type="email" name="au_email" placeholder="Business Email" autocomplete="email" aria-label="Business Email" required><input class="field" type="tel" name="au_phone" placeholder="Phone Number" autocomplete="tel" aria-label="Phone Number" required><input class="field" type="text" name="au_company" placeholder="Company Name" autocomplete="organization" aria-label="Company Name">
-<select class="field" name="au_employees" aria-label="Number of Employees"><option value="">Number of Employees</option><option>1–10</option><option>11–25</option><option>26–50</option><option>51–100</option><option>100+</option></select>
-<textarea class="field" name="au_message" rows="3" placeholder="Tell us about your communication needs" aria-label="Tell us about your communication needs"></textarea>
-<button type="submit">Request My Free Consultation</button><div class="note">No obligation. A member of our team will contact you.</div></form>
+<select class="field" name="au_employees" aria-label="How many people take calls?"><option value="">How many people take calls?</option><option>Just me</option><option>2–5</option><option>6–10</option><option>11–25</option><option>26+</option></select>
+<textarea class="field" name="au_message" rows="3" placeholder="Current provider, number of locations, anything else we should know" aria-label="Tell us about your phone setup"></textarea>
+<button type="submit">Get My Free Quote</button><div class="note">No obligation. A member of our team will contact you.</div></form>
 	<?php endif; ?>
 </div>
 	<?php
