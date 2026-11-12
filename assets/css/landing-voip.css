@@ -261,6 +261,11 @@
   background: #f5f8fc !important;
 }
 
+/* The rule above would otherwise turn the dark section white and hide its heading. */
+#au-voip .section.dark {
+  background: #07152f !important;
+}
+
 @media (max-width: 900px) {
   #au-voip .h1 {
     font-size: 43px !important;
