@@ -71,27 +71,6 @@ get_header();
 <div class="card"><div class="icon">2+</div><h3>Multiple Locations</h3><p>One system across your locations, with local numbers for each site and calls transferred between them.</p><a class="btn" style="margin-top:18px" href="#consultation">Get a Quote →</a></div>
 </div></div></section>
 
-<?php
-$au_clients = array(
-	array( 'countax.jpg', 'Countax Services Inc.', 'Mr Adeeb Siddiqui', 'GM' ),
-	array( 'travel-guide.jpg', 'Travel Guide', 'Mr Fawad Palli', 'CEO' ),
-	array( '', 'CIF', 'Dr Shoaib Hussain', 'Physician' ),
-	array( 'westend-travel.jpg', 'Westend Travel Inc.', 'Mr Athar Mohamed', 'Head' ),
-);
-?>
-<section class="section"><div class="au-wrap"><div class="center"><div class="kicker">OUR CLIENTS</div><h2 class="h2">Trusted By Local Businesses</h2><p class="muted">Business owners who rely on ArcUnify to keep their phones and IT running.</p></div>
-<div class="au-clients">
-<?php foreach ( $au_clients as $au_client ) : ?>
-<div class="au-client"><div class="au-client__logo">
-	<?php if ( $au_client[0] ) : ?>
-<img src="<?php echo esc_url( ARCUNIFY_URI . '/assets/images/clients/' . $au_client[0] ); ?>" alt="<?php echo esc_attr( $au_client[1] ); ?>" loading="lazy" decoding="async">
-	<?php else : ?>
-<span class="au-client__wordmark"><?php echo esc_html( $au_client[1] ); ?></span>
-	<?php endif; ?>
-</div><strong><?php echo esc_html( $au_client[2] ); ?></strong><small><?php echo esc_html( $au_client[3] . ', ' . $au_client[1] ); ?></small></div>
-<?php endforeach; ?>
-</div></div></section>
-
 <section class="section"><div class="au-wrap"><div class="center"><div class="kicker">FAQ</div><h2 class="h2">Common Questions</h2></div><div class="faq">
 <details><summary>Can I keep my current business phone number?</summary><p>Yes. We transfer (port) your existing number from your current provider. Your old line keeps working until the move is complete, so you don't miss calls.</p></details>
 <details><summary>Do I need new phones?</summary><p>Not necessarily. Many businesses just use the app on their cell and computer. If you want desk phones, we'll recommend models and set them up for you.</p></details>

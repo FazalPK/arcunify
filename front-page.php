@@ -19,6 +19,7 @@ get_header();
 	<?php
 	get_template_part( 'template-parts/sections/home-hero' );
 	get_template_part( 'template-parts/sections/home-proof' );
+	get_template_part( 'template-parts/sections/home-clients' );
 	get_template_part( 'template-parts/sections/home-about' );
 	get_template_part( 'template-parts/sections/home-services' );
 	get_template_part( 'template-parts/sections/home-outcomes' );
