@@ -71,12 +71,25 @@ get_header();
 <div class="card"><div class="icon">2+</div><h3>Multiple Locations</h3><p>One system across your locations, with local numbers for each site and calls transferred between them.</p><a class="btn" style="margin-top:18px" href="#consultation">Get a Quote →</a></div>
 </div></div></section>
 
-<section class="section"><div class="au-wrap"><div class="center"><div class="kicker">CLIENT FEEDBACK</div><h2 class="h2">What Business Owners Say</h2></div>
-<div class="testimonials">
-<div class="quote"><div class="stars">★★★★★ 4.9/5</div><p>“The VoIP migration was completely seamless. Call quality improved and our phone costs dropped significantly within the first quarter.”</p><small>David Chen — Office Director</small></div>
-<div class="quote"><div class="stars">★★★★★ 4.9/5</div><p>“Our remote team finally feels like one office. Calls, video, and chat all live in a single app.”</p><small>Sarah Mitchell — Operations Manager</small></div>
-<div class="quote"><div class="stars">★★★★★ 4.9/5</div><p>“Voicemail-to-email alone has saved our sales team hours every week.”</p><small>Maria Lopez — Sales Manager</small></div>
-<div class="quote"><div class="stars">★★★★★ 4.9/5</div><p>“Auto attendants route every call to the right person. Our customers noticed the difference immediately.”</p><small>James Carter — Customer Support Lead</small></div>
+<?php
+$au_clients = array(
+	array( 'countax.jpg', 'Countax Services Inc.', 'Mr Adeeb Siddiqui', 'GM' ),
+	array( 'travel-guide.jpg', 'Travel Guide', 'Mr Fawad Palli', 'CEO' ),
+	array( '', 'CIF', 'Dr Shoaib Hussain', 'Physician' ),
+	array( 'westend-travel.jpg', 'Westend Travel Inc.', 'Mr Athar Mohamed', 'Head' ),
+);
+?>
+<section class="section"><div class="au-wrap"><div class="center"><div class="kicker">OUR CLIENTS</div><h2 class="h2">Trusted By Local Businesses</h2><p class="muted">Business owners who rely on ArcUnify to keep their phones and IT running.</p></div>
+<div class="au-clients">
+<?php foreach ( $au_clients as $au_client ) : ?>
+<div class="au-client"><div class="au-client__logo">
+	<?php if ( $au_client[0] ) : ?>
+<img src="<?php echo esc_url( ARCUNIFY_URI . '/assets/images/clients/' . $au_client[0] ); ?>" alt="<?php echo esc_attr( $au_client[1] ); ?>" loading="lazy" decoding="async">
+	<?php else : ?>
+<span class="au-client__wordmark"><?php echo esc_html( $au_client[1] ); ?></span>
+	<?php endif; ?>
+</div><strong><?php echo esc_html( $au_client[2] ); ?></strong><small><?php echo esc_html( $au_client[3] . ', ' . $au_client[1] ); ?></small></div>
+<?php endforeach; ?>
 </div></div></section>
 
 <section class="section"><div class="au-wrap"><div class="center"><div class="kicker">FAQ</div><h2 class="h2">Common Questions</h2></div><div class="faq">
