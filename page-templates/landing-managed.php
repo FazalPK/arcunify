@@ -48,6 +48,7 @@
 											<li><svg class="au-icon " aria-hidden="true" focusable="false"><use href="#i-check"></use></svg><span>Data backup and disaster recovery</span></li>
 											<li><svg class="au-icon " aria-hidden="true" focusable="false"><use href="#i-check"></use></svg><span>Co-managed IT for internal teams</span></li>
 									</ul>
+				<img class="au-lp-hero__photo" src="<?php echo esc_url( ARCUNIFY_URI . '/assets/images/landing/managed-it-hero.webp' ); ?>" width="1200" height="600" alt="Small business team at their office with laptops and reports" fetchpriority="high" decoding="async">
 									<a class="au-lp-hero__call" href="tel:+14162516545">
 						<svg class="au-icon " aria-hidden="true" focusable="false"><use href="#i-phone"></use></svg>						<span><span class="au-lp-hero__call-label">Prefer A Quick Call?</span> <strong>+1 416 251 6545</strong></span>
 					</a>

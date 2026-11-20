@@ -19,6 +19,7 @@ get_header();
 <p class="lead">Keep your number, answer customer calls on your desk phone or your cell, and stop losing jobs to voicemail. We set it all up for you and stay on call when you need help.</p>
 <a class="btn" href="#consultation">Get Your Free Phone Quote →</a>
 <div class="trust"><span>✓ Keep Your Current Number</span><span>✓ Calls On Your Cell</span><span>✓ Set Up For You</span><span>✓ Local Support</span></div>
+<img class="au-hero-photo" src="<?php echo esc_url( ARCUNIFY_URI . '/assets/images/landing/voip-hero.webp' ); ?>" width="1200" height="600" alt="Office team member answering a customer call on a headset" fetchpriority="high" decoding="async">
 </div>
 <?php arcunify_render_landing_form(); ?></div></section>
 
