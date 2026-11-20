@@ -3898,15 +3898,18 @@ html:not(.js) .au-tabs__panels {
 	}
 }
 
-/* Hero photo between the checklist and the call link (theme addition). */
-.au-lp-hero__photo {
-	display: block;
-	width: 100%;
-	height: auto;
-	aspect-ratio: 2 / 1;
-	object-fit: cover;
-	margin-block: 1.75rem;
-	border-radius: 12px;
-	border: 1px solid rgba(255, 255, 255, 0.14);
-	box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+/* Hero background photo under a dark overlay, darker on the text side (theme addition). */
+.au-lp-hero {
+	background:
+		linear-gradient(90deg, rgba(5, 6, 10, 0.94) 0%, rgba(5, 6, 10, 0.84) 50%, rgba(5, 6, 10, 0.7) 100%),
+		url("../images/landing/managed-it-hero.webp") center 25% / cover no-repeat,
+		var(--au-ink);
+}
+@media (max-width: 900px) {
+	.au-lp-hero {
+		background:
+			linear-gradient(rgba(5, 6, 10, 0.9), rgba(5, 6, 10, 0.9)),
+			url("../images/landing/managed-it-hero.webp") center top / cover no-repeat,
+			var(--au-ink);
+	}
 }
